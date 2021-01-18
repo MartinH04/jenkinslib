@@ -28,7 +28,7 @@ stages{
     stage("CheckOut"){
         steps{
             script{
-		tools.PrintMsg('获取代码'，green)
+		tools.PrintMes('获取代码'，green)
                 wrap([$class: 'BuildUser']) {
                     user = env.BUILD_USER_ID
                     echo "$user"
