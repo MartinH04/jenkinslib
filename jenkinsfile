@@ -55,7 +55,7 @@ post {
     success{
         script{
             println("流水线成功后，要做的事情")
-        currentBuild.description = "执行结果：构建成功！\n build user: $user"
+            currentBuild.description = "执行结果：构建成功！\n build user: $user"
         }
         
     }
