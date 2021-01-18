@@ -1,0 +1,77 @@
+#!groovy
+@Library('jenkinslib')_
+
+def tools = new org.devops.tools()
+
+pipeline{
+//指定运行此流水线的节点
+    agent { node{ 
+            label 'master'
+        }
+        
+    }
+
+    options{
+        timestamps() //日志会打印时间,需要安timestamp插件
+        skipDefaultCheckout() //删除隐式checkout scm语句
+		disableConcurrentBuilds() //禁止并行构建
+		timeout(time: 1, unit: 'HOURS') //流水线超时设置为1小时
+    }
+
+//流水线的阶段
+stages{
+
+
+    //阶段1 获取代码
+    stage("CheckOut"){
+        steps{
+            script{
+                println("获取代码")
+                wrap([$class: 'BuildUser']) {
+                    user = env.BUILD_USER_ID
+                    echo "$user"
+                }
+                tools.PrintMes('this is my sharedlibrary')
+            }
+            sh 'printenv'
+            
+        }
+    }
+    stage("Build"){
+        steps{
+            script{
+                println("运行构建")
+            }
+        }
+    }
+}
+post {
+    always{
+        script{
+            println("流水线结束后，经常做的事情")
+        }
+    }
+        
+    success{
+        script{
+            println("流水线成功后，要做的事情")
+        currentBuild.description = "执行结果：构建成功！\n build user: $user"
+        }
+        
+    }
+    failure{
+        script{
+            println("流水线失败后，要做的事情")
+            currentBuild.description = "执行结果：构建失败！"
+        }
+    }
+        
+    aborted{
+        script{
+            println("流水线取消后，要做的事情")
+            currentBuild.description = "执行结果：构建取消！"
+        }
+        
+    }
+}
+}
